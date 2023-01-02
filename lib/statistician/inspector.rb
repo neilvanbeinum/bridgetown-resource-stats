@@ -2,6 +2,7 @@
 
 require 'emoji_regex'
 require 'nokogiri'
+require 'rake_text'
 
 module Statistician
   class Inspector < Bridgetown::Builder
@@ -9,13 +10,39 @@ module Statistician
       Bridgetown::Hooks.register_one :site, :post_write, reloadable: false do |site|
         statistics = { occurences: Hash.new(0) }
 
-        site.resources.each do |resource|
-          doc = Nokogiri.HTML5(resource.output)
+        if config[:bridgetown_resource_stats][:mode] == "emoji"
+          site.resources.each do |resource|
+            doc = Nokogiri.HTML5(resource.output)
 
-          emojis = doc.to_s.scan EmojiRegex::Regex
+            emojis = doc.to_s.scan EmojiRegex::Regex
 
-          emojis.each do |emoji|
-            statistics[:occurences][emoji] += 1
+            emojis.each do |emoji|
+              statistics[:occurences][emoji] += 1
+            end
+          end
+        elsif config[:bridgetown_resource_stats][:mode] == "keyword"
+          rake_text = RakeText.new
+          stoplist = rake_text.send(:buildStopwordRegExPattern, RakeText.SMART)
+
+          site.resources.each do |resource|
+            doc = Nokogiri.HTML5(resource.output)
+
+            body = doc.at_css('body')
+
+            # TODO: Parameterise the ignored elements here
+            main_elements = body.elements.reject { |e| ['nav', 'footer'].include?(e.name)  }
+
+            main_elements.each do |element|
+              lines = element.text.each_line.reject { |line| line.strip.empty? }
+
+              lines.each do |line|
+                keywords = rake_text.send(:generateCandidateKeywords, line.split(/[[[:punct:]].!?{}`,;:\t\\-\\"\\(\\)\\\'\u2019\u2013]/u), stoplist)
+
+                keywords.each do |word|
+                  statistics[:occurences][word] += 1
+                end
+              end
+            end
           end
         end
 
