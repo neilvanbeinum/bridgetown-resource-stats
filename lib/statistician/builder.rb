@@ -5,7 +5,7 @@ require 'nokogiri'
 require 'rake_text'
 
 module Statistician
-  class Inspector < Bridgetown::Builder
+  class Builder < Bridgetown::Builder
     def build
       Bridgetown::Hooks.register_one :site, :post_write, reloadable: false do |site|
         statistics = { occurences: Hash.new(0) }
@@ -75,4 +75,4 @@ module Statistician
   end
 end
 
-Statistician::Inspector.register
+Statistician::Builder.register

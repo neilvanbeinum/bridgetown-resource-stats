@@ -3,11 +3,11 @@
 require_relative "lib/statistician/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "bridgetown-sample-plugin"
+  spec.name          = "bridgetown-resource-statistics"
   spec.version       = Statistician::VERSION
-  spec.author        = "Bridgetown Team"
-  spec.email         = "maintainers@bridgetownrb.com"
-  spec.summary       = "Sample code for creating new Bridgetown plugins"
+  spec.author        = "Neil van Beinum"
+  spec.email         = ""
+  spec.summary       = "Bridgetown plugin for generating resource content statistics"
   spec.homepage      = "https://github.com/bridgetownrb/bridgetown-sample-plugin"
   spec.license       = "MIT"
 

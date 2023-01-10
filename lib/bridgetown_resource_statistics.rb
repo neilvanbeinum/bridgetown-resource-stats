@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "bridgetown"
-require "statistician/inspector"
+require "statistician/builder"
 
 Bridgetown::PluginManager.new_source_manifest(
   origin: Statistician,
